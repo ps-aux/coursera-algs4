@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# *************************************************
+# checkstyle-algs4
+# Hayk Martirosyan
+# -------------------
+# Easy-to-understand wrapper for using checkstyle.
+# *************************************************
+
+# This must match the install directory
+INSTALL=.
+JAVA=java
+
+# Find most recent version of Checkstyle
+CHECKSTYLE=checkstyle-[0-9].[0-9]*
+CHECKSTYLE_JAR=$(ls -td ${INSTALL}/${CHECKSTYLE}/${CHECKSTYLE}-all.jar | head -1)
+
+# xml files that specify which Checkstyle checks to run or suppress
+CHECKSTYLE_XML=${INSTALL}/checkstyle-algs4.xml
+SUPPRESSIONS_XML=${INSTALL}/checkstyle-suppressions.xml
+
+# set base directory to current working directory
+BASEDIR=`pwd -P`
+
+# If there are no arguments
+if [ ! -n "$1" ]; then
+	echo 'Specify .java files as arguments.'
+	echo "Usage: 'checkstyle Test.java'"
+	exit
+fi
+
+# If the first argument is either a .class or .java file that exists, runs findbugs
+if [ "${1##*.}" = "java" ]; then
+    if [ -e "$1" ]; then
+        echo "Running checkstyle on $*:"
+        $JAVA -cp "${CHECKSTYLE_JAR}" -Dsuppressions="${SUPPRESSIONS_XML}" -Dbasedir="${BASEDIR}" com.puppycrawl.tools.checkstyle.Main -c "${CHECKSTYLE_XML}" $* | sed 's/\[ERROR\] //'
+    else
+        echo "File not found! Make sure you are specifying the path correctly."
+        echo "The filename is case sensitive."
+    fi
+else
+    echo "Checkstyle needs a .java file as an argument!"
+    echo "The filename is case sensitive."
+fi
