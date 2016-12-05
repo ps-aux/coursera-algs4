@@ -2,7 +2,12 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
 
-    private final WeightedQuickUnionUF unionFind;
+    // Detection of top is connected to bottom
+    private final WeightedQuickUnionUF percolatesteUf;
+
+    // Detection if a site is connected to top (is full)
+    private final WeightedQuickUnionUF isFullUf;
+
     private final int n;
     private final int count;
     private final int virtualStart;
@@ -22,7 +27,8 @@ public class Percolation {
         this.virtualStart = 0;
         this.virtualEnd = size - 1;
 
-        unionFind = new WeightedQuickUnionUF(size);
+        percolatesteUf = new WeightedQuickUnionUF(size);
+        isFullUf = new WeightedQuickUnionUF(size - 1); // No need for bottom virtual end
 
         this.openSites = new boolean[this.n * this.n];
     }
@@ -49,17 +55,22 @@ public class Percolation {
         unionNeighbour(getBot(index), index);
 
         // Connect to either part if it is the first or last row site
-        if (row == 1)
-            unionFind.union(index, virtualStart);
-        if (row == n)
-            unionFind.union(index, virtualEnd);
+        if (row == 1) {
+            percolatesteUf.union(index, virtualStart);
+            isFullUf.union(index, virtualStart);
+        }
+        if (row == n) {
+            percolatesteUf.union(index, virtualEnd);
+        }
 
         openSites[index - 1] = true;
     }
 
     private void unionNeighbour(int neighbour, int index) {
-        if (neighbour > -1 && isOpenInteral(neighbour))
-            unionFind.union(neighbour, index);
+        if (neighbour > -1 && isOpenInteral(neighbour)) {
+            percolatesteUf.union(neighbour, index);
+            isFullUf.union(neighbour, index);
+        }
     }
 
     // is site (row, col) open?
@@ -120,12 +131,12 @@ public class Percolation {
         // Not opened
         if (!openSites[index - 1])
             return false;
-        return unionFind.connected(index, virtualStart);
+        return isFullUf.connected(index, virtualStart);
     }
 
     // does the system percolate?
     public boolean percolates() {
-        return unionFind.connected(virtualStart, virtualEnd);
+        return percolatesteUf.connected(virtualStart, virtualEnd);
     }
 
     private void ensureValid(int row, int col) {
