@@ -17,7 +17,7 @@ public class Percolation {
 
     // create n-by-n grid, with all sites blocked
     public Percolation(int n) {
-        if (n < 0)
+        if (n <= 0)
             throw new IllegalArgumentException(n + " < 1");
 
 
@@ -92,6 +92,8 @@ public class Percolation {
     }
 
     private boolean isLeft(int index) {
+        if (n == 1)
+            return true;
         return index % n == 1;
     }
 
