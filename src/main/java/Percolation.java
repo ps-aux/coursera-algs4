@@ -9,9 +9,6 @@ public class Percolation {
     private final int virtualEnd;
 
     private final boolean[] openSites;
-    private final boolean[] fullSites;
-    // Sites being checked
-    private final boolean[] checkedSites;
 
     // create n-by-n grid, with all sites blocked
     public Percolation(int n) {
@@ -28,8 +25,6 @@ public class Percolation {
         unionFind = new WeightedQuickUnionUF(size);
 
         this.openSites = new boolean[this.n * this.n];
-        this.fullSites = new boolean[this.n * this.n];
-        this.checkedSites = new boolean[this.n * this.n];
     }
 
 
@@ -115,45 +110,6 @@ public class Percolation {
         if (isBottom(index))
             return -1;
         return index + n;
-    }
-
-    private boolean isFullInternal(int index) {
-        int arrayIndex = index - 1;
-
-        if (!openSites[arrayIndex])
-            return false;
-        if (fullSites[arrayIndex])
-            return true;
-
-        // Open tops are always full
-        if (isTop(index))
-            return true;
-
-        // Set as being checked
-        checkedSites[arrayIndex] = true;
-
-        boolean isFull;
-
-        isFull = isNeighbourFull(getLeft(index));
-        if (!isFull)
-            isFull = isNeighbourFull(getRight(index));
-        if (!isFull)
-            isFull = isNeighbourFull(getTop(index));
-        if (!isFull)
-            isFull = isNeighbourFull(getBot(index));
-
-        if (isFull)
-            fullSites[arrayIndex] = true;
-
-        checkedSites[arrayIndex] = false;
-        return isFull;
-    }
-
-    private boolean isNeighbourFull(int neighbour) {
-        return neighbour != -1 &&
-                !checkedSites[neighbour - 1] &&
-                isFullInternal(neighbour);
-
     }
 
     // is site (row, col) full?
