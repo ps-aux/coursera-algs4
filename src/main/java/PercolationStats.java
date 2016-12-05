@@ -6,7 +6,7 @@ import edu.princeton.cs.algs4.StdStats;
  */
 public class PercolationStats {
 
-    private final int n;
+    private final int trials;
     private final double[] results;
     private final double mean;
     private double stdDev;
@@ -16,7 +16,7 @@ public class PercolationStats {
         if (n < 1 || trials < 1)
             throw new IllegalArgumentException();
 
-        this.n = n;
+        this.trials = trials;
         this.results = new double[trials];
 
         for (int i = 0; i < trials; i++) {
@@ -66,13 +66,13 @@ public class PercolationStats {
 
     // low  endpoint of 95% confidence interval
     public double confidenceLo() {
-        return mean - (1.96 * Math.sqrt(stdDev) / Math.sqrt(n));
+        return mean - 1.96 * stdDev / Math.sqrt(trials);
 
     }
 
     // high endpoint of 95% confidence interval
     public double confidenceHi() {
-        return mean + (1.96 * Math.sqrt(stdDev) / Math.sqrt(n));
+        return mean + 1.96 * stdDev / Math.sqrt(trials);
     }
 
     // test client (described below){
