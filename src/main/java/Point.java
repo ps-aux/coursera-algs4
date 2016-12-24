@@ -73,7 +73,12 @@ public class Point implements Comparable<Point> {
             if (diffY == 0) return Double.NEGATIVE_INFINITY;
             else return Double.POSITIVE_INFINITY;
 
-        return diffY / diffX;
+        double res = diffY / diffX;
+
+        if (res == -0.0)
+            res = 0.0;
+
+        return res;
     }
 
     /**
@@ -135,6 +140,11 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-        /* YOUR CODE HERE */
+        Point p1 = new Point(4, 8);
+        Point q = new Point(0, 8);
+        Point r = new Point(5, 8);
+
+        int res = p1.slopeOrder().compare(q, r);
+        System.out.println(res);
     }
 }

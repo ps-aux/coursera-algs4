@@ -4,9 +4,7 @@ import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class BruteCollinearPoints {
 
@@ -16,22 +14,22 @@ public class BruteCollinearPoints {
     public BruteCollinearPoints(Point[] points) {
         if (points == null)
             throw new NullPointerException();
-        Set<Point> set = new HashSet<>();
 
-        System.out.println("point  count is " + points.length);
-        for (Point p : points)
-            if (!set.add(p))
-                throw new IllegalArgumentException("Duplicate point " + p);
+        for (int i = 0; i < points.length - 1; i++) {
+            Point p = points[i];
+            for (int j = i + 1; j < points.length; j++) {
+                Point p2 = points[j];
+                if (p.slopeTo(p2) == Double.NEGATIVE_INFINITY)
+                    throw new IllegalArgumentException("Duplicate point " + p);
+            }
+        }
 
 
-        this.points = points;
+        this.points = Arrays.copyOf(points, points.length);
         this.segments = calculateSegments();
     }
 
     private LineSegment[] calculateSegments() {
-
-/*        Object[][] combs = Combinator.findCombinations(points, 4);
-        System.out.println("combinator " + combs.length);*/
 
         int c = 0;
         List<LineSegment> segmentsList = new ArrayList<>();
@@ -52,7 +50,6 @@ public class BruteCollinearPoints {
                         double slopePs = p.slopeTo(s);
 
                         if (slopePq == slopePr && slopePr == slopePs) {
-                            System.out.println(Arrays.toString(myPoints));
                             Arrays.sort(myPoints);
                             segmentsList.add(new LineSegment(myPoints[0], myPoints[3]));
                         }
@@ -61,8 +58,6 @@ public class BruteCollinearPoints {
             }
         }
 
-
-        System.out.println("combination count is " + c);
         return segmentsList.toArray(new LineSegment[0]);
     }
 
@@ -73,7 +68,7 @@ public class BruteCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        return segments;
+        return Arrays.copyOf(segments, segments.length);
     }
 
     public static void main(String[] args) {
@@ -104,6 +99,5 @@ public class BruteCollinearPoints {
             segment.draw();
         }
         StdDraw.show();
-        System.out.println(collinear.segments().length);
     }
 }
