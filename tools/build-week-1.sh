@@ -1,7 +1,6 @@
 #!/bin/bash
-path=$(readlink -f $0)
-src_dir=../src/main/java
-target_dir=../target/assignments
-mkdir -p $target_dir
+week=week1
+name=percolation
+files=(Percolation PercolationStats)
 
-zip -r "${target_dir}/percolation"   "${src_dir}/Percolation.java" "${src_dir}/PercolationStats.java"
+source build.sh
