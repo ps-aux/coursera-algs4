@@ -14,10 +14,10 @@ public class Board {
     // construct a board from an n-by-n array of blocks
     // (where blocks[i][j] = block in row i, column j)
     public Board(int[][] blocks) {
-        this.blocks = blocks;
+        this.blocks = makeArrayCopy(blocks);
 
 
-        this.dimension = blocks.length;
+        this.dimension = this.blocks.length;
         size = dimension * dimension;
 
         // Detect empty
@@ -121,7 +121,7 @@ public class Board {
     }
 
     private Board swapped(int i1, int i2) {
-        int[][] cp = makeArrayCopy();
+        int[][] cp = makeArrayCopy(blocks);
         int tmp = get(i1);
         cp[getY(i1) - 1][getX(i1) - 1] = get(i2);
         cp[getY(i2) - 1][getX(i2) - 1] = tmp;
@@ -132,16 +132,19 @@ public class Board {
     /**
      * Deep makeArrayCopy of the 2 dimensional array
      */
-    private int[][] makeArrayCopy() {
-        int[][] cp = new int[blocks.length][];
-        for (int i = 0; i < blocks.length; i++)
-            cp[i] = Arrays.copyOf(blocks[i], blocks.length);
+    private int[][] makeArrayCopy(int[][] original) {
+        int[][] cp = new int[original.length][];
+        for (int i = 0; i < original.length; i++)
+            cp[i] = Arrays.copyOf(original[i], original.length);
 
         return cp;
     }
 
     // does this board equal y?
     public boolean equals(Object y) {
+        if (!(y instanceof Board))
+            return false;
+
         if (y == null)
             return false;
 
@@ -181,8 +184,9 @@ public class Board {
     // string representation of this board (in the output format specified below)
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append(dimension).append("\n");
         for (int i = 1; i <= size; i++) {
-            sb.append(get(i));
+            sb.append(String.format("% 2d", get(i)));
             if (i % dimension() == 0)
                 sb.append("\n");
             else

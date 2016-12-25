@@ -1,7 +1,7 @@
 #!/bin/bash
-week=week3
-name=percolation
-files=(Point FastCollinearPoints BruteCollinearPoints)
+week=week4
+name=8puzzle
+files=(Solver Board)
 
 source build.sh
 

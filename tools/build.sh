@@ -15,9 +15,10 @@ do
     cp "${src_dir}/${f}.java" ${tmp_dir}
 done
 
-files_expr="${tmp_dir}/"*
+
+cd ${tmp_dir}
 
 # Remove package declaration
-sed -i '/^package/d' $files_expr
+sed -i '/^package/d' *
 
-zip -r "${target_dir}/${name}"  $files_expr
+zip -r ../"${name}"  *

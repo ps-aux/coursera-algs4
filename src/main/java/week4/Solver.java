@@ -26,6 +26,7 @@ public class Solver { // find a solution to the initial board (using the A* algo
     }
 
     private List<Board> solve(Board initial, boolean manhattan) {
+        System.out.println("Initial is : \n" + initial);
 
         MinPQ<SearchNode> queue = new MinPQ<>(comparator());
         queue.insert(SearchNode.create(initial, 0, manhattan));
@@ -45,6 +46,7 @@ public class Solver { // find a solution to the initial board (using the A* algo
         while (go) {
             SearchNode node = queue.delMin();
             SearchNode twinNode = twinQueue.delMin();
+            System.out.println(twinNode.board);
 
             sollution.add(node.board);
 
@@ -72,7 +74,7 @@ public class Solver { // find a solution to the initial board (using the A* algo
         // Add neighbors
         for (Board n : b.neighbors()) {
             if (!n.equals(previous)) {
-                queue.insert(SearchNode.create(b, moves + 1, manhattan));
+                queue.insert(SearchNode.create(n, moves + 1, manhattan));
             }
         }
     }
@@ -114,11 +116,11 @@ public class Solver { // find a solution to the initial board (using the A* algo
         }
 
         static SearchNode byManhattan(Board board, int moves) {
-            return new SearchNode(board, moves + board.manhattan());
+            return new SearchNode(board, 0 + board.manhattan());
         }
 
         static SearchNode byHamming(Board board, int moves) {
-            return new SearchNode(board, moves + board.hamming());
+            return new SearchNode(board, 0 + board.hamming());
         }
     }
 
