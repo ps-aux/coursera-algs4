@@ -1,3 +1,5 @@
+package week2;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -147,11 +149,6 @@ public class Deque<Item> implements Iterable<Item> {
         int[] ints = {5, 88, 33, 346, 75, 99};
         Deque<Integer> deque = new Deque<>();
 
-/*
-        for (int i : ints) {
-            d.addFirst(i);
-        }
-*/
 
         deque.addFirst(1);
         printSize(deque);
@@ -162,13 +159,6 @@ public class Deque<Item> implements Iterable<Item> {
         deque.removeLast();
         printSize(deque);
 
-
-/*        for (int i = 0; i < ints.length; i++) {
-            System.out.println(d.removeLast());
-        }*/
-
-/*        for (int i : deque)
-            System.out.println(i);*/
     }
 
     private static void printSize(Deque<?> deque) {

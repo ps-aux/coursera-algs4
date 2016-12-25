@@ -1,3 +1,5 @@
+package week2;
+
 import edu.princeton.cs.algs4.StdIn;
 
 public class Subset {

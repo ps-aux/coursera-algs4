@@ -1,6 +1,4 @@
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdOut;
+package week3;
 
 /*************************************************************************
  * Compilation:  javac LineSegment.java
@@ -63,8 +61,6 @@ public class LineSegment {
     public int hashCode() {
         throw new UnsupportedOperationException();
     }
-
-
 
 
 }

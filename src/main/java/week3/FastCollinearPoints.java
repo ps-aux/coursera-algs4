@@ -1,3 +1,5 @@
+package week3;
+
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
@@ -19,14 +21,14 @@ public class FastCollinearPoints {
         if (points == null)
             throw new NullPointerException();
 
-        for (int i = 0; i < points.length - 1; i++) {
+  /*      for (int i = 0; i < points.length - 1; i++) {
             Point p = points[i];
             for (int j = i + 1; j < points.length; j++) {
                 Point p2 = points[j];
                 if (p.slopeTo(p2) == Double.NEGATIVE_INFINITY)
                     throw new IllegalArgumentException("Duplicate point " + p);
             }
-        }
+        }*/
 
         this.points = Arrays.copyOf(points, points.length);
         this.segments = calculateSegments();
