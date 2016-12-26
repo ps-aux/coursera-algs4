@@ -142,10 +142,10 @@ public class Board {
 
     // does this board equal y?
     public boolean equals(Object y) {
-        if (!(y instanceof Board))
+        if (y == null)
             return false;
 
-        if (y == null)
+        if (!(y.getClass() == this.getClass()))
             return false;
 
         Board other = (Board) y;
@@ -186,7 +186,7 @@ public class Board {
         StringBuilder sb = new StringBuilder();
         sb.append(dimension).append("\n");
         for (int i = 1; i <= size; i++) {
-            sb.append(String.format("% 2d", get(i)));
+            sb.append(String.format("%2d", get(i)));
             if (i % dimension() == 0)
                 sb.append("\n");
             else

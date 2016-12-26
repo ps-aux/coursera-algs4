@@ -4,123 +4,101 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
+import java.util.Deque;
 
-public class Solver { // find a solution to the initial board (using the A* algorithm)
+public class Solver {
 
-    private List<Board> bestSollution;
-    private boolean solvable;
+    private Collection<Board> sollution;
 
+    // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
-
-        List<Board> manhattanSollution = solve(initial, true);
-        if (!solvable) // We found out that puzzle is unsolvable we abort finding best sollution
+        SearchNode node = solve(initial);
+        if (node == null) // Unsolvable. Nothing to do here.
             return;
-        List<Board> hammingSollution = solve(initial, false);
 
-        bestSollution = manhattanSollution.size() > hammingSollution.size() ?
-                hammingSollution : manhattanSollution;
+        Deque<Board> sollution = new ArrayDeque<Board>();
 
+        assert (node.previous != null); // At least one itter
+        do {
+            sollution.push(node.board);
+            node = node.previous;
+        } while (node != null);
+
+        this.sollution = sollution;
     }
 
-    private List<Board> solve(Board initial, boolean manhattan) {
-        System.out.println("Initial is : \n" + initial);
+    private SearchNode solve(Board initial) {
+        SearchNode initialNode = new SearchNode(initial, null);
+        if (initial.isGoal())
+            return initialNode;
 
         MinPQ<SearchNode> queue = new MinPQ<>(comparator());
-        queue.insert(SearchNode.create(initial, 0, manhattan));
+        queue.insert(initialNode);
 
-        Board twin = initial.twin();
+        Board twinNode = initial.twin();
         MinPQ<SearchNode> twinQueue = new MinPQ<>(comparator());
-        twinQueue.insert(SearchNode.create(twin, 0, manhattan));
+        twinQueue.insert(new SearchNode(twinNode, null));
 
-        List<Board> sollution = new ArrayList<>();
+        while (true) {
 
-        boolean go = true;
-
-        Board previous = null;
-        Board twinPrevious = null;
-        int origMoves = 0;
-        int twinMoves = 0;
-        while (go) {
-            SearchNode node = queue.delMin();
-            SearchNode twinNode = twinQueue.delMin();
-            System.out.println(twinNode.board);
-
-            sollution.add(node.board);
-
-            nextStep(node.board, previous, queue, origMoves, manhattan);
-            nextStep(twinNode.board, twinPrevious, twinQueue, twinMoves, manhattan);
-
-            // We detected that the puzzle is unsolvable
-            if (twinNode.board.isGoal()) {
-                solvable = false;
+            SearchNode twin = nextStep(twinQueue);
+            if (twin.board.isGoal())
                 return null;
+
+            SearchNode node = nextStep(queue);
+            if (node.board.isGoal()) {
+                return node;
             }
-
-            go = !node.board.isGoal();
-            previous = node.board;
-            twinPrevious = twinNode.board;
-            origMoves++;
-            twinMoves++;
         }
-
-        solvable = true;
-        return sollution;
     }
 
-    private void nextStep(Board b, Board previous, MinPQ<SearchNode> queue, int moves, boolean manhattan) {
+    private SearchNode nextStep(MinPQ<SearchNode> queue) {
+        SearchNode node = queue.delMin();
         // Add neighbors
-        for (Board n : b.neighbors()) {
-            if (!n.equals(previous)) {
-                queue.insert(SearchNode.create(n, moves + 1, manhattan));
+        for (Board n : node.board.neighbors()) {
+            if (!n.equals(node.previous)) {
+                queue.insert(new SearchNode(n, node));
             }
         }
+
+        return node;
     }
 
 
     // is the initial board solvable?
     public boolean isSolvable() {
-        return solvable;
+        return sollution != null;
     }
 
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
-        if (!solvable)
+        if (!isSolvable())
             return -1;
-        return bestSollution.size() - 1;
+        return sollution.size() - 1;
     }
 
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
-        if (!solvable)
-            return null;
-        return bestSollution;
+        return sollution;
     }
 
     private static class SearchNode {
         private final Board board;
-        private final int score;
+        private final SearchNode previous;
+        private final int moves;
+        private final int priority;
 
-        private SearchNode(Board board, int score) {
+        private SearchNode(Board board, SearchNode previous) {
             this.board = board;
-            this.score = score;
-        }
+            this.previous = previous;
+            this.moves = previous == null ? 0 : previous.moves + 1;
+            this.priority = moves + board.manhattan();
+            if (!(previous == null) && !(this.priority >= previous.priority))
+                throw new IllegalArgumentException("eeeeee");
 
-        static SearchNode create(Board board, int moves, boolean manhattan) {
-            if (manhattan)
-                return byManhattan(board, moves);
-            else
-                return byHamming(board, moves);
-        }
-
-        static SearchNode byManhattan(Board board, int moves) {
-            return new SearchNode(board, 0 + board.manhattan());
-        }
-
-        static SearchNode byHamming(Board board, int moves) {
-            return new SearchNode(board, 0 + board.hamming());
         }
     }
 
@@ -128,7 +106,7 @@ public class Solver { // find a solution to the initial board (using the A* algo
         return new Comparator<SearchNode>() {
             @Override
             public int compare(SearchNode o1, SearchNode o2) {
-                return o1.score - o2.score;
+                return o1.priority - o2.priority;
             }
         };
     }
@@ -136,6 +114,7 @@ public class Solver { // find a solution to the initial board (using the A* algo
 
     // solve a slider puzzle (given below)
     public static void main(String[] args) {
+        System.out.println(args[0]);
         // create initial board from file
         In in = new In(args[0]);
         int n = in.readInt();
@@ -156,6 +135,9 @@ public class Solver { // find a solution to the initial board (using the A* algo
             for (Board board : solver.solution())
                 StdOut.println(board);
         }
+        System.out.println(solver.moves());
+        if (solver.sollution != null)
+            System.out.println(solver.sollution.size());
     }
 
 
